@@ -30,7 +30,7 @@ router.post('',async (req,res)=>{
 // get all courses
 router.get('',async (req,res)=>{
     //let courses = await Course.find({},'title author isPublished -_id');
-    let courses = await Course.find();
+    let courses = await Course.find().populate('author.id');
     res.send(courses);
 });
 // get title starts with a prefix
