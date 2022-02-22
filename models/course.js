@@ -3,7 +3,12 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
 const course_schema = new mongoose.Schema({
-    title : String,
+    title : {
+        type: String,
+        required: true,
+        unique: true,
+        minlength : 5
+    },
     author : {
         name : String,
         id : {
@@ -11,13 +16,27 @@ const course_schema = new mongoose.Schema({
             ref: 'Author'
         }
     },
-    tags : [String],
+    tags : {
+    type:[String],
+    validate : {
+        validator : function (val) {
+            return val && val.length >= 2
+        },
+        message : 'A course must have at least two tags'
+    }
+},
     date : {
         type: Date,
         default: Date.now()
     },
     isPublished : Boolean,
-    price : Number
+    price : {
+        type:Number,
+        min : 10,
+        required: function () {
+            return this.isPublished;
+        }
+    }
 });
 
 const course_validation = Joi.object({
