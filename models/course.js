@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 
 const course_schema = new mongoose.Schema({
     title : String,
-    author : String,
+    author : {
+        name : String,
+        id : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref: 'Author'
+        }
+    },
     tags : [String],
     date : {
         type: Date,
@@ -15,7 +22,7 @@ const course_schema = new mongoose.Schema({
 
 const course_validation = Joi.object({
     title : Joi.string().min(3).required(),
-    author : Joi.string().min(5).max(30).required(),
+    author : Joi.objectId(),
     tags : Joi.array().items(Joi.string().alphanum()).required(),
     isPublished : Joi.boolean(),
     price : Joi.number().positive()
@@ -23,7 +30,7 @@ const course_validation = Joi.object({
 
 const course_validation_update = Joi.object({
     title : Joi.string().min(3),
-    author : Joi.string().min(5).max(30),
+    author : Joi.objectId(),
     tags : Joi.array().items(Joi.string().alphanum()),
     isPublished : Joi.boolean(),
     price : Joi.number().positive()
