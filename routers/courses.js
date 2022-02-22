@@ -48,6 +48,11 @@ router.get('/price/under/:p',async (req,res)=>{
     res.send(courses);
 });
 
+// update 
+router.put('/:id', async (req,res)=> {
+    // new data is validated
 
+    //update content
+});
 
 module.exports=router;
