@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {Course, course_validation} = require('../models/course');
+const {Course, course_validation, course_validation_update} = require('../models/course');
 
 // add course to DB
 // add Joi 
@@ -19,7 +19,8 @@ router.post('',async (req,res)=>{
 
 // get all courses
 router.get('',async (req,res)=>{
-    let courses = await Course.find({},'title author isPublished -_id');
+    //let courses = await Course.find({},'title author isPublished -_id');
+    let courses = await Course.find();
     res.send(courses);
 });
 // get title starts with a prefix
@@ -51,8 +52,21 @@ router.get('/price/under/:p',async (req,res)=>{
 // update 
 router.put('/:id', async (req,res)=> {
     // new data is validated
-
+    let result_valid= course_validation_update.validate(req.body);
+    if(result_valid.error)
+        return res.status(400).send(result_valid.error.details[0].message);
+    
     //update content
+    await Course.updateOne({_id: req.params.id},req.body);
+    res.send(await Course.findById(req.params.id));
+});
+
+// delete 
+router.delete('/:id', async (req,res)=> {
+    let course = await Course.findByIdAndRemove(req.params.id);
+    if(! course )
+        return res.status(404).send('Course id is not found');
+    res.send(course);
 });
 
 module.exports=router;
