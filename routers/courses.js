@@ -10,8 +10,16 @@ router.post('',async (req,res)=>{
         let result_valid= course_validation.validate(req.body);
         if(result_valid.error)
             return res.status(400).send(result_valid.error.details[0].message);
+        let author = await Author.findById(req.body.author);
+        if(! author )
+            return res.status(400).send('Author Id does not exist');
+        
         let course = new Course(req.body);
+        course.author.name = author.name;
+        course.author.id = author._id;
         course =  await course.save();
+        author.courses.push(course._id);
+        await author.save();
         res.status(201).send(course);
     } catch (error) {
         res.status(400).send('Problem saving Course : '+error.message)
