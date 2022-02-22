@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const {Course, course_validation, course_validation_update} = require('../models/course');
-
+const {Author} = require('../models/author')
 // add course to DB
 // add Joi 
+// change this to support the new collection author
+// must update courses in Author
 router.post('',async (req,res)=>{
     try {
         let result_valid= course_validation.validate(req.body);
