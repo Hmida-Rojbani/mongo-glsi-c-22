@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const {Course, course_validation, course_validation_update} = require('../models/course');
-const {Author} = require('../models/author')
+const {Author} = require('../models/author');
+const auth = require('../middlewares/auth');
+const autoris = require('../middlewares/autoris');
 // add course to DB
 // add Joi 
 // change this to support the new collection author
 // must update courses in Author
-router.post('',async (req,res)=>{
+router.post('',auth,async (req,res)=>{
     try {
         let result_valid= course_validation.validate(req.body);
         if(result_valid.error)
@@ -60,7 +62,7 @@ router.get('/price/under/:p',async (req,res)=>{
 });
 
 // update 
-router.put('/:id', async (req,res)=> {
+router.put('/:id', auth,async (req,res)=> {
     // new data is validated
     let result_valid= course_validation_update.validate(req.body);
     if(result_valid.error)
@@ -72,7 +74,7 @@ router.put('/:id', async (req,res)=> {
 });
 
 // delete 
-router.delete('/:id', async (req,res)=> {
+router.delete('/:id',[auth,autoris], async (req,res)=> {
     let course = await Course.findByIdAndRemove(req.params.id);
     if(! course )
         return res.status(404).send('Course id is not found');
