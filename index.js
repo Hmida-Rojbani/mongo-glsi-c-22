@@ -8,6 +8,9 @@ const port = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 
+app.get('/', (req,res)=>{
+    res.send('<h1> Welcome to our RestAPI </h1>');
+});
 app.use('/api/courses',course_router);
 app.use('/api/authors',auth,author_router);
 app.use('/api/users',user_router);
